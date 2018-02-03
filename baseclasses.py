@@ -6,8 +6,7 @@ SpellListData = namedtuple('SpellListData', ['spell_name',
                                              'spell_school',
                                              'spell_range',
                                              'spell_incant',
-                                             'spell_materials_number',
-                                             'spell_materials_type',
+                                             'spell_materials',
                                              'spell_effects',
                                              'spell_limitations',
                                              'spell_notes',
@@ -44,8 +43,7 @@ class DisplaySpell:
             else list_data.spell_range
 
         self.spell_incant = list_data.spell_incant
-        self.spell_materials_number = list_data.spell_materials_number
-        self.spell_materials_type = list_data.spell_materials_type
+        self.spell_materials = list_data.spell_materials  # List of tuples, (number,color,type)
         self.spell_effects = list_data.spell_effects
         self.spell_limitations = list_data.spell_limitations
         self.spell_notes = list_data.spell_notes
@@ -73,7 +71,7 @@ class DisplayList:
         self.spell_list = spell_list if spell_list \
             else self.new_list(player_class=player_class, player_level=player_level)
         self.spell_list_data = None  # dict, key=spell name
-        self.purchase_list_data = None  # list
+        self.purchase_list_data = None  # dict, key=(class,level,name)
         self.points_available = {str(level): 0 for level in range(1, 6)}
         self.spells_purchased = {key: 0 for key in self.spell_list.keys()}
         self.load_data()
@@ -202,6 +200,6 @@ class DisplayList:
         list_name = f'{player_class} List {auto_name_number}'
         spell_list = {(spell.spell_level, spell.spell_name):
                       DisplaySpell(self.spell_list_data[spell.spell_name], spell, int(spell.spell_level)
-                      <= int(player_level)) for spell in self.purchase_list_data
+                      <= int(player_level)) for spell in self.purchase_list_data.values()
                       if spell.class_name == player_class}
         return SpellList(spell_list, list_name, player_class, player_level)
